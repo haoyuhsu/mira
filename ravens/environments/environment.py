@@ -96,6 +96,7 @@ class Environment(gym.Env):
         high=np.array([0.75, 0.5, 0.28], dtype=np.float32),
         shape=(3,),
         dtype=np.float32)
+    # Q: what is pose0 and pose1?
     self.action_space = gym.spaces.Dict({
         'pose0':
             gym.spaces.Tuple(

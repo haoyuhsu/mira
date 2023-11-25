@@ -237,6 +237,12 @@ def multiply(pose0, pose1):
 
 
 def apply(pose, position):
+  """
+  pose: (position, quaternion)
+  position: (x, y, z)
+  
+  returns: (x, y, z) transformed by pose
+  """
   position = np.float32(position)
   position_shape = position.shape
   position = np.float32(position).reshape(3, -1)

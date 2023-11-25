@@ -68,6 +68,8 @@ def main(unused_argv):
   seed = dataset.max_seed
   if seed < 0:
     seed = -1 if (task.mode == 'test') else -2
+
+  max_steps = task.max_steps
   
   # Collect training data from oracle demonstrations.
   while dataset.n_episodes < FLAGS.n:
@@ -78,16 +80,20 @@ def main(unused_argv):
     env.set_task(task)
     obs, info = env.reset()
     reward = 0
-
-    # Let agent act.
-    act = agent.act(obs, info)
-    episode.append((obs, act, reward, info))
-    obs, reward, done, info = env.step(act)
+    
+    for _ in range(max_steps):
+      # Let agent act.
+      act = agent.act(obs, info)
+      episode.append((obs, act, reward, info))
+      obs, reward, done, info = env.step(act)
+      total_reward += reward
+      print(f'Total Reward: {total_reward} Done: {done}')
+      if done:
+        break
     episode.append((obs, None, reward, info))
-    print(f'Total Reward: {reward} Done: {done}')
 
     # Only save completed demonstrations.
-    if reward > 0.99 and not FLAGS.debug:
+    if total_reward > 0.99 and not FLAGS.debug:
       # Reset to the env before act.
       np.random.seed(seed)
       obs = env.reset()
@@ -100,20 +106,20 @@ def main(unused_argv):
       else:
         write_nerf_data(nerf_dataset_path, env, act)
 
-      # Train NeRF to generate depth.
-      n_steps = 5000
-      os.makedirs(dataset.path, exist_ok=True)
-      NGP_PATH = './orthographic-ngp'
-      cmd = f'python {NGP_PATH}/scripts/run.py --mode nerf \
-              --scene {nerf_dataset_path} \
-              --width 160 --height 320 --n_steps {n_steps} \
-              --screenshot_transforms {nerf_dataset_path}/test/transforms_test.json \
-              --near_distance 0 \
-              --nerfporter \
-              --nerfporter_color_dir {dataset.path}/nerf-cmap/{dataset.n_episodes:06d}-{seed} \
-              --nerfporter_depth_dir {dataset.path}/nerf-hmap/{dataset.n_episodes:06d}-{seed} \
-              --screenshot_spp 1'
-      os.system(cmd)
+      # Train NeRF to generate depth. (we do not use images rendered by NeRF)
+      # n_steps = 5000
+      # os.makedirs(dataset.path, exist_ok=True)
+      # NGP_PATH = './orthographic-ngp'
+      # cmd = f'python {NGP_PATH}/scripts/run.py --mode nerf \
+      #         --scene {nerf_dataset_path} \
+      #         --width 160 --height 320 --n_steps {n_steps} \
+      #         --screenshot_transforms {nerf_dataset_path}/test/transforms_test.json \
+      #         --near_distance 0 \
+      #         --nerfporter \
+      #         --nerfporter_color_dir {dataset.path}/nerf-cmap/{dataset.n_episodes:06d}-{seed} \
+      #         --nerfporter_depth_dir {dataset.path}/nerf-hmap/{dataset.n_episodes:06d}-{seed} \
+      #         --screenshot_spp 1'
+      # os.system(cmd)
 
       # Store demonstrations.
       dataset.add(seed, episode)

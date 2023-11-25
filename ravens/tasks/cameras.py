@@ -91,7 +91,8 @@ class RealSenseD415():
     height_high = 1.15
     r = 0.75
 
-    heights = np.linspace(height_low, height_high, n_input_views)
+    # heights = np.linspace(height_low, height_high, n_input_views)
+    heights = height_low * np.ones(n_input_views)  # Fixed height.
     for i in range(n_input_views):
       theta = (2 * np.pi / n_input_views) * i
       x = r * np.cos(theta) + center[0]

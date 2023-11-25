@@ -35,12 +35,25 @@ import pybullet as p
 class Task():
   """Base Task class."""
 
+  # Class variables.
+  rolls = [0]
+  pitchs = [0]
+
+  @classmethod
+  def get_rolls(cls):
+      return cls.rolls
+
+  @classmethod
+  def get_pitchs(cls):
+      return cls.pitchs
+
   def __init__(self, continuous = False):
     """Constructor.
 
     Args:
       continuous: Set to `True` if you want the continuous variant.
     """
+
     self.continuous = continuous
     self.ee = Suction
     self.mode = 'train'
@@ -132,8 +145,11 @@ class Task():
           targets_i = np.argwhere(matches[i, :]).reshape(-1)
           for j in targets_i:
             if self.is_match(pose, targs[j], symmetry):
+              # print('{}th object is matched with {}th target'.format(i, j))
               matches[i, :] = 0
               matches[:, j] = 0
+
+      # print('matches:\n', matches)
 
       # Get objects to be picked (prioritize farthest from nearest neighbor).
       nn_dists = []
@@ -163,11 +179,16 @@ class Task():
       for pick_i in order:
         pick_mask = np.uint8(obj_mask == objs[pick_i][0])
 
+        # save pick_mask into binary image
+        # cv2.imwrite('/home/max/Desktop/mira/pick_mask_{}.png'.format(pick_i), pick_mask * 255)
+
         # Erode to avoid picking on edges.
         # pick_mask = cv2.erode(pick_mask, np.ones((3, 3), np.uint8))
 
         if np.sum(pick_mask) > 0:
           break
+
+      # print('pick_mask', pick_mask.shape, np.sum(pick_mask))
 
       # Trigger task reset if no object is visible.
       if pick_mask is None or np.sum(pick_mask) == 0:
@@ -314,6 +335,11 @@ class Task():
     diff_pos = np.float32(pose0[0][:2]) - np.float32(pose1[0][:2])
     dist_pos = np.linalg.norm(diff_pos)
 
+    # consider height error
+    diff_height = np.float32(pose0[0][2]) - np.float32(pose1[0][2])
+    dist_height = np.abs(diff_height)
+    height_is_close = (dist_height < self.pos_eps)
+
     # Get rotational error around z-axis (account for symmetries).
     diff_rot = 0
     rot_is_close = (diff_rot < self.rot_eps)
@@ -352,13 +378,16 @@ class Task():
       pos_is_close = (dist_pos < self.pos_eps*2)
 
     
-    return pos_is_close and rot_is_close
+    return pos_is_close and rot_is_close and height_is_close
 
   def get_true_image(self, env):
     """Get RGB-D orthographic heightmaps and segmentation masks."""
 
     # Capture near-orthographic RGB-D images and segmentation masks.
     color, depth, segm = env.render_camera(self.oracle_cams[0])
+
+    # save color image
+    # cv2.imwrite('/home/max/Desktop/mira/color.png', color)
 
     # Combine color with masks for faster processing.
     color = np.concatenate((color, segm[Ellipsis, None]), axis=2)

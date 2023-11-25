@@ -30,9 +30,7 @@ from ravens.tasks.packing_shoes import PackingShoes
 from ravens.tasks.packing_shapes import PackingShapes
 from ravens.tasks.packing_clothes import PackingClothes
 from ravens.tasks.packing_ropes import PackingRopes
-from ravens.tasks.palletizing_boxes import PalletizingBoxes
 from ravens.tasks.place_red_in_green import PlaceRedInGreen, PlaceRedInGreenSixDofDiscrete, PlaceRedInGreenSixDof, PlaceRedInGreenSixDofOOD
-from ravens.tasks.stack_block_pyramid import StackBlockPyramid
 from ravens.tasks.sweeping_piles import SweepingPiles
 from ravens.tasks.task import Task
 from ravens.tasks.towers_of_hanoi import TowersOfHanoi
@@ -40,11 +38,14 @@ from ravens.tasks.hanging_disks import HangingDisks, HangingDisksOOD
 from ravens.tasks.hanging_ring import HangingRing
 from ravens.tasks.stacking_kits import StackingKits, StackingKitsOOD
 
+from ravens.tasks.stack_block_pyramid import StackBlockPyramid, StackingTowers
+from ravens.tasks.palletizing_boxes import PalletizingBoxes, PalletizingBlocks
+
 names = {
     'align-box-corner': AlignBoxCorner,
-    'assembling-kits': AssemblingKits,
+    'assembling-kits': AssemblingKits,   # put letter-shaped blocks into a board with holes
     'assembling-kits-easy': AssemblingKitsEasy,
-    'block-insertion': BlockInsertion,
+    'block-insertion': BlockInsertion,   # put 'L' shaped block into a fixture
     'block-insertion-easy': BlockInsertionEasy,
     'block-insertion-nofixture': BlockInsertionNoFixture,
     'block-insertion-sixdof': BlockInsertionSixDof,
@@ -54,15 +55,15 @@ names = {
     'block-insertion-fivedof-discrete': BlockInsertionFiveDofDiscrete,
     'block-insertion-translation': BlockInsertionTranslation,
     'manipulating-rope': ManipulatingRope,
-    'packing-boxes': PackingBoxes,
+    'packing-boxes': PackingBoxes,        # put boxes into a container (useful for our case)
     'packing-shoes': PackingShoes,
     'packing-shapes': PackingShapes,
-    'palletizing-boxes': PalletizingBoxes,
-    'place-red-in-green': PlaceRedInGreen,
+    'palletizing-boxes': PalletizingBoxes,    # put a box on a wooden pallet one by one (useful for our case)
+    'place-red-in-green': PlaceRedInGreen,    # put red block into green bowl
     'place-red-in-green-sixdof-discrete': PlaceRedInGreenSixDofDiscrete,
     'place-red-in-green-sixdof': PlaceRedInGreenSixDof,
     'place-red-in-green-sixdof-ood': PlaceRedInGreenSixDofOOD,
-    'stack-block-pyramid': StackBlockPyramid,
+    'stack-block-pyramid': StackBlockPyramid,   # stack blocks into a pyramid (1, 2, 3)
     'sweeping-piles': SweepingPiles,
     'towers-of-hanoi': TowersOfHanoi,
     'hanging-disks': HangingDisks,
@@ -70,6 +71,8 @@ names = {
     'packing-clothes': PackingClothes,
     'packing-ropes': PackingRopes,
     'hanging-ring': HangingRing,
-    'stacking-kits': StackingKits,
-    'stacking-kits-ood': StackingKitsOOD
+    'stacking-kits': StackingKits,         # stacking a kit on top of another kit
+    'stacking-kits-ood': StackingKitsOOD,
+    'palletizing-blocks': PalletizingBlocks,  # our project task
+    'stack-towers': StackingTowers,        # our project task
 }

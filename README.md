@@ -25,6 +25,8 @@ git clone git@github.com:yenchenlin/mira.git
 cd ~/mira
 pip install -r requirements.txt
 python setup.py install --user
+pip install protobuf==3.20.*
+conda install -c conda-forge gcc=12.1.0
 ```
 
 **Step 2.** Install [orthographic-ngp](https://github.com/yenchenlin/orthographic-ngp/) and its dependencies.
@@ -42,8 +44,9 @@ cd ../
 Generate training and test data (saved locally). Note: remove `--disp` for headless mode.
 
 ```shell
-python ravens/demos.py --assets_root=./ravens/environments/assets/ --disp=True --task=$TASK --mode=train --n=10
-python ravens/demos.py --assets_root=./ravens/environments/assets/ --disp=True --task=$TASK --mode=test --n=10
+# Remember to update the envrionment if ravens/ are modified. (by running '''python setup.py install --user''')
+python ravens/demos.py --assets_root=./ravens/environments/assets/ --disp=True --task=stack-towers --mode=train --n=5 --n_input_views 4
+python ravens/demos.py --assets_root=./ravens/environments/assets/ --disp=True --task=palletizing-blocks --mode=train --n=5 --n_input_views 4
 ```
 
 where `$TASK` can be `block-insertion-sixdof`.
