@@ -18,6 +18,7 @@
 import numpy as np
 from ravens.tasks.task import Task
 from ravens.utils import utils
+import os
 
 import pybullet as p
 
@@ -92,20 +93,25 @@ class StackingTowers(Task):
     env.add_object(base_urdf, base_pose, 'fixed')
 
     # Block colors.
-    colors = [
-        utils.COLORS['purple'], utils.COLORS['blue'], utils.COLORS['green'],
-        utils.COLORS['yellow'], utils.COLORS['orange'], utils.COLORS['red']
-    ]
+    colors = [utils.COLORS[c] for c in utils.COLORS]
+
+    # Random shuffle colors
+    np.random.shuffle(colors)
 
     # Add blocks.
     objs = []
     # sym = np.pi / 2
     block_size = (0.04, 0.04, 0.04)
     block_urdf = 'stacking/block.urdf'
-    for i in range(6):
+    for i in range(5):
       block_pose = self.get_random_pose(env, block_size)
       block_id = env.add_object(block_urdf, block_pose)
+      # Option 1: change color
       p.changeVisualShape(block_id, -1, rgbaColor=colors[i] + [1])
+      # Option 2: change texture
+      # texture_path = os.path.join(env.assets_root, 'stacking/letter-a.png')
+      # texture = p.loadTexture(texture_path)
+      # p.changeVisualShape(block_id, -1, textureUniqueId=texture)
       objs.append((block_id, (np.pi / 2, None)))
 
     # Associate placement locations for goals.
@@ -113,11 +119,6 @@ class StackingTowers(Task):
                  (0, 0, 0.11), (0, 0, 0.15),
                  (0, 0, 0.19), (0, 0, 0.23)]
     targs = [(utils.apply(base_pose, i), base_pose[1]) for i in place_pos]
-
-    # print('targs:\n', targs)
-
-    # random shuffle objects
-    objs = np.random.permutation(objs)
 
     # Goal: blocks are stacked in a tower in arbitrary order.
     self.goals.append((objs, np.ones((6, 6)), targs,

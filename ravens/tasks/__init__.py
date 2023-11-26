@@ -25,7 +25,6 @@ from ravens.tasks.block_insertion import BlockInsertionSixDof, BlockInsertionSix
 from ravens.tasks.block_insertion import BlockInsertionFiveDofDiscrete, BlockInsertionSixDofPerspective
 from ravens.tasks.block_insertion import BlockInsertionTranslation
 from ravens.tasks.manipulating_rope import ManipulatingRope
-from ravens.tasks.packing_boxes import PackingBoxes
 from ravens.tasks.packing_shoes import PackingShoes
 from ravens.tasks.packing_shapes import PackingShapes
 from ravens.tasks.packing_clothes import PackingClothes
@@ -37,9 +36,10 @@ from ravens.tasks.towers_of_hanoi import TowersOfHanoi
 from ravens.tasks.hanging_disks import HangingDisks, HangingDisksOOD
 from ravens.tasks.hanging_ring import HangingRing
 from ravens.tasks.stacking_kits import StackingKits, StackingKitsOOD
+from ravens.tasks.palletizing_boxes import PalletizingBoxes
 
 from ravens.tasks.stack_block_pyramid import StackBlockPyramid, StackingTowers
-from ravens.tasks.palletizing_boxes import PalletizingBoxes, PalletizingBlocks
+from ravens.tasks.packing_boxes import PackingBoxes, StackingBoxes
 
 names = {
     'align-box-corner': AlignBoxCorner,
@@ -73,6 +73,6 @@ names = {
     'hanging-ring': HangingRing,
     'stacking-kits': StackingKits,         # stacking a kit on top of another kit
     'stacking-kits-ood': StackingKitsOOD,
-    'palletizing-blocks': PalletizingBlocks,  # our project task
+    'stack-boxes': StackingBoxes,          # our project task
     'stack-towers': StackingTowers,        # our project task
 }
