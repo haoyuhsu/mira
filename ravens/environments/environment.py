@@ -421,10 +421,13 @@ class Environment(gym.Env):
   def _get_obs(self):
     # Get RGB-D camera image observations.
     obs = {'color': (), 'depth': ()}
-    for config in self.agent_cams:
+    ###############################################
+    # change to nerf cams
+    for config in self.nerf_cams:
       color, depth, _ = self.render_camera(config)
       obs['color'] += (color,)
       obs['depth'] += (depth,)
+    ###############################################
 
     return obs
 
